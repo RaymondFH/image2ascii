@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to ASCII Converter</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Image to ASCII Converter</h1>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" name="image" id="image" accept="image/*" required>
+            <button type="submit">Convert</button>
+        </form>
+        <h2>ASCII Art</h2>
+        <textarea id="ascii-art" readonly></textarea>
+    </div>
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append('image', document.getElementById('image').files[0]);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            document.getElementById('ascii-art').textContent = data.ascii_art;
+        });
+    </script>
+</body>
+</html>
