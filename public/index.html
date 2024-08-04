@@ -14,25 +14,36 @@
     <pre id="ascii-art"></pre>
 
     <script>
-        document.getElementById('upload-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            try {
-                const response = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-                if (data.ascii_art) {
-                    document.getElementById('ascii-art').textContent = data.ascii_art;
-                } else {
-                    document.getElementById('ascii-art').textContent = 'Error: ' + data.error;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('ascii-art').textContent = 'Error uploading image';
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fileInput = document.querySelector('input[type="file"]');
+        const file = fileInput.files[0];
+        
+        if (file && file.size > 3 * 1024 * 1024) {
+            alert('File is too large. Maximum size is 3 MB.');
+            return;
+        }
+
+        const formData = new FormData(e.target);
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        });
-    </script>
+            const data = await response.json();
+            if (data.ascii_art) {
+                document.getElementById('ascii-art').textContent = data.ascii_art;
+            } else {
+                document.getElementById('ascii-art').textContent = 'Error: ' + (data.error || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('ascii-art').textContent = 'Error uploading image: ' + error.message;
+        }
+    });
+</script>
 </body>
 </html>
