@@ -30,7 +30,7 @@ def image_to_ascii(image):
 def index():
     return render_template('index.html')
 
-@app.route('/upload', methods=['POST'])
+@app.route('/api/upload', methods=['POST'])
 def upload_image():
     try:
         if 'image' not in request.files:
@@ -49,6 +49,3 @@ def upload_image():
     except Exception as e:
         logger.error(f"Error processing image: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)

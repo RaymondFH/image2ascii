@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to ASCII Converter</title>
+</head>
+<body>
+    <h1>Image to ASCII Converter</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Convert</button>
+    </form>
+    <pre id="ascii-art"></pre>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.ascii_art) {
+                    document.getElementById('ascii-art').textContent = data.ascii_art;
+                } else {
+                    document.getElementById('ascii-art').textContent = 'Error: ' + data.error;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('ascii-art').textContent = 'Error uploading image';
+            }
+        });
+    </script>
+</body>
+</html>
